@@ -1,5 +1,5 @@
 from django import forms
-from .models import Driver, Sponsor
+from .models import Driver, Sponsor, Company, Product
 
 # create a custom form for the Driver Model
 class UserRegistrationForm(forms.ModelForm):
@@ -32,7 +32,7 @@ class UserRegistrationForm(forms.ModelForm):
 		model = Driver
 		fields = ['username', 'first_name', 'last_name', 'phone_num', 'email', 'address', 'password']
 
-# Driver Registration Form
+# Sponsor Registration Form
 class SponsorRegistrationForm(forms.ModelForm):
 		username = forms.CharField(label = 'Username')
 		first_name = forms.CharField(label = 'First Name')
@@ -61,3 +61,12 @@ class SponsorRegistrationForm(forms.ModelForm):
 		class Meta:
 			model = Sponsor
 			fields = ['username', 'first_name', 'last_name', 'email', 'sponsor_company', 'password']
+
+			#Figuring out the product page. Need to relookup Django forms...
+#class SponsorUpload(forms.ModelForm):
+#	name = forms.CharField(label = 'Product Name')
+#	stock = forms.IntegerField(default=1)
+#	price = forms.IntegerField(default=1)
+#	desc = forms.CharField(max_length=2000)
+	#images???
+#	idNum = forms.IntegerField(default=1)
