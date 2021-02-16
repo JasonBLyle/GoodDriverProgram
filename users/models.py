@@ -46,3 +46,4 @@ class Company(models.Model):
 	name = models.CharField(max_length=50)
 	sponsors_list_usernames = ArrayField(models.CharField(max_length=30), blank=True)
 	products = ArrayField(models.IntegerField(default=1), blank=true)
+	currentNewID = models.IntegerField(default=1)
