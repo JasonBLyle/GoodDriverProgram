@@ -15,11 +15,25 @@
 				<p class="text-secondary">{{ user.first_name }}</p>
 				<p class="text-secondary">{{ user.last_name }}</p>
 				<!-- TODO: how do i print this array of names? this may work but im honestly not sure.  -->
-				<p class="text-secondary">{{ user.drivers_list_usernames }} drivers_list_usernames</p>
+				<!-- <p class="text-secondary">{{ user.drivers_list_usernames }} drivers_list_usernames</p> -->
 			</div>
 		</div>
 	</div>
-
-	<!-- For Adding A new driver... Does admin have to do this or can a sponsor??? -->
 	
-{% endblock content%}	
+			<!-- This is updating sponsor info
+	<div class="row">
+		<div class="col-md-4">
+			<div class="content-section">
+				<div class="media-heading">
+					<p class="text-secondary">{{ user.username }}</p>
+					<p class="text-secondary">{{ user.email }}</p>
+					<a href="{% url 'update-info' %}">Edit Profile Information</a>
+				</div>
+			</div>
+		</div>
+	</div> -->
+
+
+
+
+{% endblock content%}

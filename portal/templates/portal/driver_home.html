@@ -1,19 +1,28 @@
 {% extends "portal/base.html" %}
+{% load static %}
 {% block content %}
 	<div class="row">
-		<div class="col-md-12">
-			<h1>Driver Home</h1>
+		<div class="col-md-12 d-flex justify-content-center">
+			<h1 style="text-decoration: underline;">Driver Home</h1>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-md-6">
-			<div class="media-heading">
-				<h2 class="account-heading">{{ user.username }}</h2>
-				<p class="text-secondary">{{ user.email }}</p>
-				<p class="text-secondary">{{ points }} points</p>
-				<!-- {% if points <= -1 %}
-					<p class="text-secondary">Point Status: Bad</p>
-				{% endif %} -->
+			<h2 class="account-heading">Welcome, {{ first_name }} {{ last_name }}</h2>
+			<div class="content-section">
+				<div class="media-body">
+					<img class="rounded-circle account-img img-fluid" src="{{ profile_photo }}">
+					<p class="text-secondary">{{ user.username }}</p>
+					<p class="text-secondary">{{ user.email }}</p>
+					<p class="text-secondary">{{ phone_num }}</p>
+					<p class="text-secondary">{{ address }}</p>
+					<a href="{% url 'update-info' %}">Edit Profile Information</a>
+				</div>
+			</div>
+			<div class="content-section">
+				<div class="media-heading">
+					<h5 class="text-secondary">Current Point Balance: {{ points }} points</h5>
+				</div>
 			</div>
 		</div>
 		<div class="col-md-6">
@@ -25,7 +34,7 @@
 						<th scope="col">Date</th>
 						<th scope="col">Reason</th>
 					</tr>
-					{% for item in point_hist %}
+					{% for item in point_hist reversed %}
 						<tbody>
 							<tr>
 								<td>{{ item.points }}</td>

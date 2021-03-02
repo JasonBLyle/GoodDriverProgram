@@ -1,5 +1,6 @@
 from django.db import models
-from django.contrib.postgres.fields import ArrayField
+from PIL import Image
+# from django.contrib.postgres.fields import ArrayField
 
 # Model for the User Table - all users will be stored in here and this table will be checked on login
 class GenericUser(models.Model):
@@ -17,15 +18,35 @@ class Driver(models.Model):
 	email = models.CharField(max_length=30)
 	address = models.CharField(max_length=50)
 	points = models.IntegerField(default=0)
+	# ADDED
+	sponsor = models.CharField(max_length=50, default = "")
+	profile_photo = models.ImageField(default='default.jpg', upload_to='profile_photos')
+
+	def save(self):
+		super().save()
+		image = Image.open(self.profile_photo.path)
+		if image.height > 300 or image.width > 300:
+			output_size = (300, 300)
+			image.thumbnail(output_size)
+			image.save(self.profile_photo.path)
+
+# Changed name of admin to avoid error thrown during migration
+class GenericAdmin(models.Model):
+    username = models.CharField(max_length=30)
+    password = models.CharField(max_length=30)
+    first_name = models.CharField(max_length=20)
+    last_name = models.CharField(max_length=30)
+    email = models.CharField(max_length=30)
 
 class Sponsor(models.Model):
 	username = models.CharField(max_length=30)
 	password = models.CharField(max_length=30)
 	first_name = models.CharField(max_length=20)
 	last_name = models.CharField(max_length=30)
-	email = models.CharField(max_length=30)
-	sponsor_company = models.CharField(max_length=30)
-	drivers_list_usernames = ArrayField(models.CharField(max_length=30), blank=True)
+	phone_num = models.CharField(max_length=15, default = "")
+	email = models.CharField(max_length=30, default = "")
+	address = models.CharField(max_length=50, default = "")
+	sponsor_company = models.CharField(max_length=30, default = "")
 
 class PointHist(models.Model):
 	username = models.CharField(max_length=30)
@@ -41,9 +62,3 @@ class Product(models.Model):
 	desc = models.CharField(max_length=2000)
 	#images???
 	idNum = models.IntegerField(default=1)
-
-class Company(models.Model):
-	name = models.CharField(max_length=50)
-	sponsors_list_usernames = ArrayField(models.CharField(max_length=30), blank=True)
-	products = ArrayField(models.IntegerField(default=1), blank=True)
-	currentNewID = models.IntegerField(default=1)

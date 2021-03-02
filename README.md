@@ -4,7 +4,9 @@
 Must install Django
 
 ## Starting Development Server
-`python manage.py runserver`
+`python manage.py runserver`\
+\
+This command will start the web-portal at `localhost` or `yourip:8000`
 
 ## App Layout
 

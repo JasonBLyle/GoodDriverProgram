@@ -7,5 +7,6 @@ urlpatterns = [
     path('login-routing/', views.home, name='home'),
 	path('register/', views.register, name='register-user'),
 	path('driver_home/', views.driver_home, name='driver-home'),
-    path('sponsor_home/', views.sponsor_home, name='sponsor-home')
+    path('sponsor_home/', views.sponsor_home, name='sponsor-home'),
+    path('admin/', views.GenericAdmin, name='admin-home')
 ]
