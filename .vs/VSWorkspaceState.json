@@ -4,8 +4,10 @@
     "\\Good_Driver_Program",
     "\\Good_Driver_Program\\__pycache__",
     "\\portal",
+    "\\portal\\templates",
+    "\\portal\\templates\\portal",
     "\\users"
   ],
-  "SelectedNode": "\\portal\\views.py",
+  "SelectedNode": "\\Good_Driver_Program\\urls.py",
   "PreviewInSolutionExplorer": false
 }

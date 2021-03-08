@@ -1,0 +1,39 @@
+{% extends "portal/base.html" %}
+{% block content %}
+	<div class="row">
+		<div class="col-md-12 d-flex justify-content-center">
+			<h1>Sponsor Home</h1>
+			<!-- TODO: WANT TO ADD IN SPONSOR NAME HERE, SOME KIND OF WELCOME MESSAGE WOULD BE NICE -->
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-4">
+			<div class="media-heading">
+				<h2 class="account-heading">{{ user.username }}</h2>
+				<p class="text-secondary">{{ user.email }}</p>
+				<p class="text-secondary">{{ user.first_name }}</p>
+				<p class="text-secondary">{{ user.last_name }}</p>
+				<!-- TODO: how do i print this array of names? this may work but im honestly not sure.  -->
+				<!-- <p class="text-secondary">{{ user.drivers_list_usernames }} drivers_list_usernames</p> -->
+			</div>
+		</div>
+	</div>
+	
+			<!-- This is updating sponsor info
+	<div class="row">
+		<div class="col-md-4">
+			<div class="content-section">
+				<div class="media-heading">
+					<p class="text-secondary">{{ user.username }}</p>
+					<p class="text-secondary">{{ user.email }}</p>
+					<a href="{% url 'update-info' %}">Edit Profile Information</a>
+				</div>
+			</div>
+		</div>
+	</div> -->
+
+
+
+
+{% endblock content%}

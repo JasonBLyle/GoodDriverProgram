@@ -5,7 +5,9 @@ from users.models import Sponsor
 from users.models import GenericAdmin
 from users.models import GenericUser
 from django.shortcuts import redirect
+import requests
 from django.contrib.auth.models import User
+
 
 # send user to homepage
 def home(request):
@@ -81,3 +83,66 @@ def sponsor_home(request):
 
 def admin_home(request):
 	return render(request, 'admin/')
+
+def catalog_sponsor(request):
+	# Assign the sponsor user data to the user var
+	user = request.user
+	# Get the sponsor username
+	user = request.user
+	gUser = GenericUser.objects.get(username=user.username)
+	userType = gUser.type
+	if userType == 'Sponsor':
+		sponsor = Sponsor.objects.get(username=user.username)
+		#try:
+		#	my_drivers = Driver.objects.filter(sponsor=user.username)
+		#except Driver.DoesNotExist:
+		#	my_drivers = None
+
+		data = {
+			'first_name' : sponsor.first_name,
+			'last_name' : sponsor.last_name,
+			'phone_num' : sponsor.phone_num,
+			'address' : sponsor.address,
+			'email' : sponsor.email,
+			# Get rid of this variable, later.
+			'sponsor_company' : sponsor.sponsor_company,
+			# This will access all of the drivers assigned to the sponsors.
+			'my_drivers' : my_drivers
+		}
+		response=render(request, 'portal/catalog_sponsor.html', data)
+	else:
+		response = redirect('home')
+	return response
+
+def sponsor_list(request):
+	# Assign the sponsor user data to the user var
+	user = request.user
+	# Get the sponsor username
+	gUser = GenericUser.objects.get(username=user.username)
+	userType = gUser.type
+	if userType == 'Driver':
+		response = redirect('driver-home')
+	elif userType == 'Sponsor':
+		sponsor = Sponsor.objects.get(username=user.username)
+		try:
+			my_drivers = Driver.objects.filter(sponsor=user.username)
+		except Driver.DoesNotExist:
+			my_drivers = None
+
+		data = {
+			'first_name' : sponsor.first_name,
+			'last_name' : sponsor.last_name,
+			'phone_num' : sponsor.phone_num,
+			'address' : sponsor.address,
+			'email' : sponsor.email,
+			# Get rid of this variable, later.
+			'sponsor_company' : sponsor.sponsor_company,
+			# This will access all of the drivers assigned to the sponsors.
+			'my_drivers' : my_drivers
+		}
+		response =  render(request, 'portal/sponsor_list_item.html', data)
+	elif userType == 'Admin':
+		response = redirect('admin-home')
+	else:
+		response = redirect('logout')
+	return response
