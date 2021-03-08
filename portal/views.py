@@ -93,21 +93,23 @@ def catalog_sponsor(request):
 	userType = gUser.type
 	if userType == 'Sponsor':
 		sponsor = Sponsor.objects.get(username=user.username)
-		#try:
-		#	my_drivers = Driver.objects.filter(sponsor=user.username)
-		#except Driver.DoesNotExist:
-		#	my_drivers = None
-
+		response = requests.get('https://openapi.etsy.com/v2/listings/active?api_key=pmewf48x56vb387qgsprzzry')
+		parse1 = response.json()
+		parse2 = parse1['results']
+		parse3 = parse2[0]
+		tags = "tags: "
+		for x in parse3['tags']:
+			tags = tags+x+", "
 		data = {
-			'first_name' : sponsor.first_name,
-			'last_name' : sponsor.last_name,
-			'phone_num' : sponsor.phone_num,
+			'first_name' :parse3['title'],
+			'last_name' : parse3['description'],
+			'phone_num' : parse3['price'] + " " + parse3['currency_code'],
 			'address' : sponsor.address,
-			'email' : sponsor.email,
+			'email' : tags,
 			# Get rid of this variable, later.
 			'sponsor_company' : sponsor.sponsor_company,
 			# This will access all of the drivers assigned to the sponsors.
-			'my_drivers' : my_drivers
+			'items':parse2
 		}
 		response=render(request, 'portal/catalog_sponsor.html', data)
 	else:
