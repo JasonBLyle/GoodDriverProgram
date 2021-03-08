@@ -93,7 +93,9 @@ def catalog_sponsor(request):
 	userType = gUser.type
 	if userType == 'Sponsor':
 		sponsor = Sponsor.objects.get(username=user.username)
-		response = requests.get('https://openapi.etsy.com/v2/listings/active?api_key=pmewf48x56vb387qgsprzzry')
+		#responseGetListing = requests.get('https://openapi.etsy.com/v2/shops/WarhammerMinisUS?api_key=pmewf48x56vb387qgsprzzry')
+		#response = requests.get('https://openapi.etsy.com/v2/shops/CreeepyPrints/listings/active?api_key=pmewf48x56vb387qgsprzzry')
+		response = requests.get('https://openapi.etsy.com/v2/shops/'+sponsor.sponsor_company+'/listings/active?api_key=pmewf48x56vb387qgsprzzry')
 		parse1 = response.json()
 		parse2 = parse1['results']
 		parse3 = parse2[0]
