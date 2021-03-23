@@ -4,6 +4,7 @@ from users.models import Driver, PointHist
 from users.models import Sponsor
 from users.models import GenericAdmin
 from users.models import GenericUser
+from .forms import SearchBar
 from django.shortcuts import redirect
 import requests
 from django.contrib.auth.models import User
@@ -130,40 +131,44 @@ def sponsor_list(request):
 	# Get the sponsor username
 	gUser = GenericUser.objects.get(username=user.username)
 	userType = gUser.type
-	if userType == 'Sponsor':
-		sponsor = Sponsor.objects.get(username=user.username)
-		form = SearchBar(request.POST)
-		if form.get('search')!="":
-			#responseGetListing = requests.get('https://openapi.etsy.com/v2/shops/WarhammerMinisUS?api_key=pmewf48x56vb387qgsprzzry')
-			#response = requests.get('https://openapi.etsy.com/v2/shops/CreeepyPrints/listings/active?api_key=pmewf48x56vb387qgsprzzry')
-			response = requests.get('https://openapi.etsy.com/v2/shops/'+sponsor.sponsor_company+'/listings/active?api_key=pmewf48x56vb387qgsprzzry')
-			parse1 = response.json()
-			parse2 = parse1['results']
-			parse3 = parse2
-			tags = "tags: "
-			for x in parse3:
-				if len(x['title'])>50:
-					x['title']=x['title'][0:49]+'...'
-				if len(x['description'])>250:
-					x['description']=x['description'][0:249 ]+'...'
+	if request.method == 'POST':
+		if userType == 'Sponsor':
+			sponsor = Sponsor.objects.get(username=user.username)
+			form = SearchBar(request.POST)
+			if form.get('give me a search you absolute goon')!="":
+				#responseGetListing = requests.get('https://openapi.etsy.com/v2/shops/WarhammerMinisUS?api_key=pmewf48x56vb387qgsprzzry')
+				#response = requests.get('https://openapi.etsy.com/v2/shops/CreeepyPrints/listings/active?api_key=pmewf48x56vb387qgsprzzry')
+				response = requests.get('https://openapi.etsy.com/v2/shops/'+sponsor.sponsor_company+'/listings/active?api_key=pmewf48x56vb387qgsprzzry')
+				parse1 = response.json()
+				parse2 = parse1['results']
+				parse3 = parse2
+				tags = "tags: "
+				for x in parse3:
+					if len(x['title'])>50:
+						x['title']=x['title'][0:49]+'...'
+					if len(x['description'])>250:
+						x['description']=x['description'][0:249 ]+'...'
 				
-			parse4 = parse3[0]
-			data = {
-				'first_name' :parse4['title'],
-				'last_name' : parse4['description'],
-				'phone_num' : parse4['price'] + " " + parse4['currency_code'],
-				'address' : sponsor.address,
-				'email' : tags,
-				# Get rid of this variable, later.
-				'sponsor_company' : sponsor.sponsor_company,
-				# This will access all of the drivers assigned to the sponsors.
-				'items':parse3
-			}
-		else:
-			data = { #lmao xd
+				parse4 = parse3[0]
+				data = {
+					'first_name' :parse4['title'],
+					'last_name' : parse4['description'],
+					'phone_num' : parse4['price'] + " " + parse4['currency_code'],
+					'address' : sponsor.address,
+					'email' : tags,
+					# Get rid of this variable, later.
+					'sponsor_company' : sponsor.sponsor_company,
+					# This will access all of the drivers assigned to the sponsors.
+					'items':parse3
 				}
+			else:
+				data = { #lmao xd
+					}
 		
-		response=render(request, 'portal/catalog_sponsor.html', data)
+			response=render(request, 'portal/catalog_sponsor.html', data)
+		else:
+			response = redirect('home')
 	else:
-		response = redirect('home')
+		form = SearchBar()
+	
 	return response
