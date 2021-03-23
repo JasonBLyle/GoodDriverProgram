@@ -68,6 +68,7 @@ def sponsor_home(request):
 		my_drivers = None
 
 	data = {
+		'user':sponsor,
 		'first_name' : sponsor.first_name,
 		'last_name' : sponsor.last_name,
 		'phone_num' : sponsor.phone_num,
@@ -98,20 +99,25 @@ def catalog_sponsor(request):
 		response = requests.get('https://openapi.etsy.com/v2/shops/'+sponsor.sponsor_company+'/listings/active?api_key=pmewf48x56vb387qgsprzzry')
 		parse1 = response.json()
 		parse2 = parse1['results']
-		parse3 = parse2[0]
+		parse3 = parse2
 		tags = "tags: "
-		for x in parse3['tags']:
-			tags = tags+x+", "
+		for x in parse3:
+			if len(x['title'])>50:
+				x['title']=x['title'][0:49]+'...'
+			if len(x['description'])>250:
+				x['description']=x['description'][0:249 ]+'...'
+				
+		parse4 = parse3[0]
 		data = {
-			'first_name' :parse3['title'],
-			'last_name' : parse3['description'],
-			'phone_num' : parse3['price'] + " " + parse3['currency_code'],
+			'first_name' :parse4['title'],
+			'last_name' : parse4['description'],
+			'phone_num' : parse4['price'] + " " + parse4['currency_code'],
 			'address' : sponsor.address,
 			'email' : tags,
 			# Get rid of this variable, later.
 			'sponsor_company' : sponsor.sponsor_company,
 			# This will access all of the drivers assigned to the sponsors.
-			'items':parse2
+			'items':parse3
 		}
 		response=render(request, 'portal/catalog_sponsor.html', data)
 	else:
@@ -124,29 +130,40 @@ def sponsor_list(request):
 	# Get the sponsor username
 	gUser = GenericUser.objects.get(username=user.username)
 	userType = gUser.type
-	if userType == 'Driver':
-		response = redirect('driver-home')
-	elif userType == 'Sponsor':
+	if userType == 'Sponsor':
 		sponsor = Sponsor.objects.get(username=user.username)
-		try:
-			my_drivers = Driver.objects.filter(sponsor=user.username)
-		except Driver.DoesNotExist:
-			my_drivers = None
-
-		data = {
-			'first_name' : sponsor.first_name,
-			'last_name' : sponsor.last_name,
-			'phone_num' : sponsor.phone_num,
-			'address' : sponsor.address,
-			'email' : sponsor.email,
-			# Get rid of this variable, later.
-			'sponsor_company' : sponsor.sponsor_company,
-			# This will access all of the drivers assigned to the sponsors.
-			'my_drivers' : my_drivers
-		}
-		response =  render(request, 'portal/sponsor_list_item.html', data)
-	elif userType == 'Admin':
-		response = redirect('admin-home')
+		form = SearchBar(request.POST)
+		if form.get('search')!="":
+			#responseGetListing = requests.get('https://openapi.etsy.com/v2/shops/WarhammerMinisUS?api_key=pmewf48x56vb387qgsprzzry')
+			#response = requests.get('https://openapi.etsy.com/v2/shops/CreeepyPrints/listings/active?api_key=pmewf48x56vb387qgsprzzry')
+			response = requests.get('https://openapi.etsy.com/v2/shops/'+sponsor.sponsor_company+'/listings/active?api_key=pmewf48x56vb387qgsprzzry')
+			parse1 = response.json()
+			parse2 = parse1['results']
+			parse3 = parse2
+			tags = "tags: "
+			for x in parse3:
+				if len(x['title'])>50:
+					x['title']=x['title'][0:49]+'...'
+				if len(x['description'])>250:
+					x['description']=x['description'][0:249 ]+'...'
+				
+			parse4 = parse3[0]
+			data = {
+				'first_name' :parse4['title'],
+				'last_name' : parse4['description'],
+				'phone_num' : parse4['price'] + " " + parse4['currency_code'],
+				'address' : sponsor.address,
+				'email' : tags,
+				# Get rid of this variable, later.
+				'sponsor_company' : sponsor.sponsor_company,
+				# This will access all of the drivers assigned to the sponsors.
+				'items':parse3
+			}
+		else:
+			data = { #lmao xd
+				}
+		
+		response=render(request, 'portal/catalog_sponsor.html', data)
 	else:
-		response = redirect('logout')
+		response = redirect('home')
 	return response

@@ -56,9 +56,6 @@ class PointHist(models.Model):
 	reason = models.CharField(max_length=300)
 
 class Product(models.Model):
-	name = models.CharField(max_length=50)
-	stock = models.IntegerField(default=1)
-	price = models.IntegerField(default=1)
-	desc = models.CharField(max_length=2000)
-	#images???
+	sponsor_company = models.CharField(max_length=30, default = "")
 	idNum = models.IntegerField(default=1)
+	priceRaw = models.IntegerField(default=1) #Assuming we ever reach the point of point scaling per driver...
