@@ -47,6 +47,21 @@ class Sponsor(models.Model):
 	email = models.CharField(max_length=30, default = "")
 	address = models.CharField(max_length=50, default = "")
 	sponsor_company = models.CharField(max_length=30, default = "")
+	list_last_search = models.CharField(max_length=50,default="candle")
+	list_items_per_page = models.IntegerField(default=25)
+	list_sort_order = models.CharField(max_length=4,default="up") #up, down
+	list_sort_on = models.CharField(max_length=7,default="created") #created, price, score
+	catalog_last_search = models.CharField(max_length=50,default="")
+	catalog_items_per_page = models.IntegerField(default=25)
+	catalog_sort_order = models.CharField(max_length=4,default="up") #up, down
+	catalog_sort_on = models.CharField(max_length=7,default="name") #name, ...?
+
+class Sponsorship(models.Model):
+	sponsor_company = models.CharField(max_length=30, default = "")
+	driver = models.CharField(max_length=30)
+	driver_points = models.IntegerField(default=0)
+	price_scalar = models.FloatField(default=1)
+
 
 class PointHist(models.Model):
 	username = models.CharField(max_length=30)

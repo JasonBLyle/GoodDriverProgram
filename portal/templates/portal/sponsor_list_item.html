@@ -2,22 +2,49 @@
 {% block content %}
 	<div class="row">
 		<div class="col-md-12 d-flex justify-content-center">
-			<h1>Sponsor Home</h1>
-			<!-- TODO: WANT TO ADD IN SPONSOR NAME HERE, SOME KIND OF WELCOME MESSAGE WOULD BE NICE -->
+			<h1>Add Items To Your Catalog</h1>
 		</div>
 	</div>
 
 	<div class="row">
-		<div class="col-md-4">
-			<div class="media-heading">
-				<h2 class="account-heading">{{ user.username }}</h2>
-				<p class="text-secondary">{{ user.email }}</p>
-				<p class="text-secondary">{{ user.first_name }}</p>
-				<p class="text-secondary">{{ user.last_name }}</p>
-				<!-- TODO: how do i print this array of names? this may work but im honestly not sure.  -->
-				<!-- <p class="text-secondary">{{ user.drivers_list_usernames }} drivers_list_usernames</p> -->
-			</div>
-		</div>
+		<form action="{% url 'sponsor-list-item' %}" method="post">
+			<label for="search">Search: </label>
+			{% csrf_token %}
+			<input id="search" type="text" name="search" value="{{ search }}" />
+			<input type="submit" value="Search" />
+		</form>
+	</div>
+
+	<div class="row">
+		<!-- <div class="col-md-6">-->
+		{% if items %}
+		<table class="table">
+			<tr>
+				<th scope="col">Product</th>
+				<th scope="col">Price</th>
+				<th scope="col"></th>
+				<th scope="col">Description</th>
+			</tr>
+			{% for item in items reversed %}
+			<tbody>
+				<tr>
+					<td>{{ item.title }}</td>
+					<td>{{ item.price }}</td>
+					<td>{{ item.currency_code }}</td>
+					<td>{{ item.description }}</td>
+					<td>
+						<form action="{% url 'sponsor-list-item' %}" method="post">
+							{% csrf_token %}
+							<button id="product-chosen" type="submit" name="product-chosen" value="{{ item.listing_id }}"  class="btn btn-success">Add to Catalog</button>
+						</form>
+					</td>
+				</tr>
+			</tbody>
+			{% endfor %}
+		</table>
+		{% else %}
+		<p class="text-secondary">Look something up!</p>
+		{% endif %}
 	</div>
 	
 			<!-- This is updating sponsor info

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from users.models import Driver, PointHist
-from users.models import Sponsor
+from users.models import Sponsor, Product
 from users.models import GenericAdmin
 from users.models import GenericUser
 from .forms import SearchBar
@@ -97,10 +97,13 @@ def catalog_sponsor(request):
 		sponsor = Sponsor.objects.get(username=user.username)
 		#responseGetListing = requests.get('https://openapi.etsy.com/v2/shops/WarhammerMinisUS?api_key=pmewf48x56vb387qgsprzzry')
 		#response = requests.get('https://openapi.etsy.com/v2/shops/CreeepyPrints/listings/active?api_key=pmewf48x56vb387qgsprzzry')
-		response = requests.get('https://openapi.etsy.com/v2/shops/'+sponsor.sponsor_company+'/listings/active?api_key=pmewf48x56vb387qgsprzzry')
-		parse1 = response.json()
-		parse2 = parse1['results']
-		parse3 = parse2
+		listed_products = Product.objects.filter(sponsor_company=sponsor.sponsor_company)
+		#response = requests.get('https://openapi.etsy.com/v2/shops/'+sponsor.sponsor_company+'/listings/active?api_key=pmewf48x56vb387qgsprzzry')
+		parse1 = []
+		for item in listed_products:
+			parse1.append(requests.get('https://openapi.etsy.com/v2/listings/'+str(item.idNum)+'?api_key=pmewf48x56vb387qgsprzzry').json()['results'])
+		#parse2 = parse1['results']
+		parse3 = parse1
 		tags = "tags: "
 		for x in parse3:
 			if len(x['title'])>50:
@@ -131,44 +134,37 @@ def sponsor_list(request):
 	# Get the sponsor username
 	gUser = GenericUser.objects.get(username=user.username)
 	userType = gUser.type
-	if request.method == 'POST':
-		if userType == 'Sponsor':
-			sponsor = Sponsor.objects.get(username=user.username)
-			form = SearchBar(request.POST)
-			if form.get('give me a search you absolute goon')!="":
-				#responseGetListing = requests.get('https://openapi.etsy.com/v2/shops/WarhammerMinisUS?api_key=pmewf48x56vb387qgsprzzry')
-				#response = requests.get('https://openapi.etsy.com/v2/shops/CreeepyPrints/listings/active?api_key=pmewf48x56vb387qgsprzzry')
-				response = requests.get('https://openapi.etsy.com/v2/shops/'+sponsor.sponsor_company+'/listings/active?api_key=pmewf48x56vb387qgsprzzry')
-				parse1 = response.json()
-				parse2 = parse1['results']
-				parse3 = parse2
-				tags = "tags: "
-				for x in parse3:
-					if len(x['title'])>50:
-						x['title']=x['title'][0:49]+'...'
-					if len(x['description'])>250:
-						x['description']=x['description'][0:249 ]+'...'
-				
-				parse4 = parse3[0]
-				data = {
-					'first_name' :parse4['title'],
-					'last_name' : parse4['description'],
-					'phone_num' : parse4['price'] + " " + parse4['currency_code'],
-					'address' : sponsor.address,
-					'email' : tags,
-					# Get rid of this variable, later.
-					'sponsor_company' : sponsor.sponsor_company,
-					# This will access all of the drivers assigned to the sponsors.
-					'items':parse3
-				}
-			else:
-				data = { #lmao xd
-					}
-		
-			response=render(request, 'portal/catalog_sponsor.html', data)
-		else:
-			response = redirect('home')
+	print('user retrieved')
+	if userType == 'Sponsor':
+		sponsor = Sponsor.objects.get(username=user.username)
+		search = sponsor.list_last_search
+		search = request.POST.get('search')
+		print('search is :')
+		print(search)
+		prodID = ''
+		prodID = request.POST.get('product-chosen')
+		print('prodID is ')
+		print(prodID)
+		if search!=sponsor.list_last_search and search!=None:
+			sponsor.list_last_search = search
+			sponsor.save()
+		if prodID!='' and prodID!=None:
+			print('Product ID received!')
+			if Product.objects.filter(sponsor_company=sponsor.sponsor_company, idNum = prodID).exists()==False:
+				print('Product not found in db')
+				newProduct = Product.objects.create(sponsor_company=sponsor.sponsor_company, idNum=prodID, priceRaw = float(requests.get('https://openapi.etsy.com/v2/listings/'+prodID+'?api_key=pmewf48x56vb387qgsprzzry').json()['results'][0]['price']))
+		response = requests.get('https://openapi.etsy.com/v2/listings/active?keywords='+sponsor.list_last_search+'&api_key=pmewf48x56vb387qgsprzzry')
+		print('request made, parsing results...')
+		parse1 = response.json()['results']
+		for x in parse1:
+			if len(x['title'])>50:
+				x['title']=x['title'][0:49]+'...'
+			if len(x['description'])>250:
+				x['description']=x['description'][0:249 ]+'...'
+		data = {
+			'items': parse1
+			}
+		response=render(request, 'portal/sponsor_list_item.html', data)
 	else:
-		form = SearchBar()
-	
+		response = redirect('home')	
 	return response
