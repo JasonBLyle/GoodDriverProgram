@@ -97,11 +97,17 @@ def catalog_sponsor(request):
 		sponsor = Sponsor.objects.get(username=user.username)
 		#responseGetListing = requests.get('https://openapi.etsy.com/v2/shops/WarhammerMinisUS?api_key=pmewf48x56vb387qgsprzzry')
 		#response = requests.get('https://openapi.etsy.com/v2/shops/CreeepyPrints/listings/active?api_key=pmewf48x56vb387qgsprzzry')
+		prodID = ''
+		prodID = request.POST.get('product-chosen')
+		if prodID!='' and prodID!=None:
+			print('Product ID received!')
+			if Product.objects.filter(sponsor_company=sponsor.sponsor_company, idNum = prodID).exists():
+				newProduct = Product.objects.filter(sponsor_company=sponsor.sponsor_company, idNum = prodID).delete()
 		listed_products = Product.objects.filter(sponsor_company=sponsor.sponsor_company)
 		#response = requests.get('https://openapi.etsy.com/v2/shops/'+sponsor.sponsor_company+'/listings/active?api_key=pmewf48x56vb387qgsprzzry')
 		parse1 = []
 		for item in listed_products:
-			parse1.append(requests.get('https://openapi.etsy.com/v2/listings/'+str(item.idNum)+'?api_key=pmewf48x56vb387qgsprzzry').json()['results'])
+			parse1.append(requests.get('https://openapi.etsy.com/v2/listings/'+str(item.idNum)+'?api_key=pmewf48x56vb387qgsprzzry').json()['results'][0])
 		#parse2 = parse1['results']
 		parse3 = parse1
 		tags = "tags: "
@@ -111,13 +117,13 @@ def catalog_sponsor(request):
 			if len(x['description'])>250:
 				x['description']=x['description'][0:249 ]+'...'
 				
-		parse4 = parse3[0]
+		#parse4 = parse3[0]
 		data = {
-			'first_name' :parse4['title'],
-			'last_name' : parse4['description'],
-			'phone_num' : parse4['price'] + " " + parse4['currency_code'],
-			'address' : sponsor.address,
-			'email' : tags,
+			#'first_name' :parse4['title'],
+			#'last_name' : parse4['description'],
+			#'phone_num' : parse4['price'] + " " + parse4['currency_code'],
+			#'address' : sponsor.address,
+			#'email' : tags,
 			# Get rid of this variable, later.
 			'sponsor_company' : sponsor.sponsor_company,
 			# This will access all of the drivers assigned to the sponsors.
@@ -162,7 +168,8 @@ def sponsor_list(request):
 			if len(x['description'])>250:
 				x['description']=x['description'][0:249 ]+'...'
 		data = {
-			'items': parse1
+			'items': parse1,
+			'searchVal': sponsor.list_last_search
 			}
 		response=render(request, 'portal/sponsor_list_item.html', data)
 	else:

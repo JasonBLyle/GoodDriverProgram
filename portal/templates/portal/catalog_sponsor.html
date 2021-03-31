@@ -1,15 +1,15 @@
-{% extends "portal/base.html" %}
+{% extends "portal/base_sponsor.html" %}
 {% block content %}
 <div class="row">
 	<div class="col-md-12 d-flex justify-content-center">
-		<h1>Sponsor Home</h1>
+		<h1>Sponsor Catalog</h1>
 		<!-- TODO: WANT TO ADD IN SPONSOR NAME HERE, SOME KIND OF WELCOME MESSAGE WOULD BE NICE -->
 	</div>
 </div>
 
 <div class="row">
 	<!-- <div class="col-md-6">-->
-	<h2 class="media-heading d-flex justify-content-center">Point History</h2>
+	<h2 class="media-heading d-flex justify-content-center">Your drivers can currently buy:</h2>
 	{% if items %}
 	<table class="table">
 		<tr>
@@ -25,6 +25,12 @@
 				<td>{{ item.price }}</td>
 				<td>{{ item.currency_code }}</td>
 				<td>{{ item.description }}</td>
+				<td>
+					<form action="{% url 'catalog-sponsor' %}" method="post">
+						{% csrf_token %}
+						<button id="product-chosen" type="submit" name="product-chosen" value="{{ item.listing_id }}" class="btn btn-success">Remove from Catalog</button>
+					</form>
+				</td>
 			</tr>
 		</tbody>
 		{% endfor %}

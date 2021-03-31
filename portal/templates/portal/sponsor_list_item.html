@@ -1,4 +1,4 @@
-{% extends "portal/base.html" %}
+{% extends "portal/base_sponsor.html" %}
 {% block content %}
 	<div class="row">
 		<div class="col-md-12 d-flex justify-content-center">
@@ -13,6 +13,10 @@
 			<input id="search" type="text" name="search" value="{{ search }}" />
 			<input type="submit" value="Search" />
 		</form>
+		<div class="col-md-12 d-flex justify-content-right">
+			<p class="text-secondary d-flex justify-content-right">Currently showing results for: {{searchVal}}</p>
+		</div>
+		
 	</div>
 
 	<div class="row">
