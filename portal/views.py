@@ -8,6 +8,7 @@ from .forms import SearchBar
 from django.shortcuts import redirect
 import requests
 from django.contrib.auth.models import User
+from html import unescape
 
 
 # send user to homepage
@@ -108,6 +109,9 @@ def catalog_sponsor(request):
 		parse3 = parse1
 		tags = "tags: "
 		for x in parse3:
+			x['title']=unescape(x['title'])
+			x['description']=unescape(x['description'])
+			x['image']=requests.get('https://openapi.etsy.com/v2/listings/'+str(x['listing_id'])+'/images?api_key=pmewf48x56vb387qgsprzzry').json()['results'][0]['url_170x135']
 			if len(x['title'])>50:
 				x['title']=x['title'][0:49]+'...'
 			if len(x['description'])>250:
@@ -147,6 +151,9 @@ def sponsor_list(request):
 		response = requests.get('https://openapi.etsy.com/v2/listings/active?keywords='+sponsor.list_last_search+'&api_key=pmewf48x56vb387qgsprzzry')
 		parse1 = response.json()['results']
 		for x in parse1:
+			x['title']=unescape(x['title'])
+			x['description']=unescape(x['description'])
+			x['image']=requests.get('https://openapi.etsy.com/v2/listings/'+str(x['listing_id'])+'/images?api_key=pmewf48x56vb387qgsprzzry').json()['results'][0]['url_170x135']
 			if len(x['title'])>50:
 				x['title']=x['title'][0:49]+'...'
 			if len(x['description'])>250:

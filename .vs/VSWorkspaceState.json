@@ -1,13 +1,18 @@
 {
   "ExpandedNodes": [
     "",
+    "\\env",
+    "\\env\\Lib",
+    "\\env\\Lib\\site-packages",
+    "\\env\\Lib\\site-packages\\django",
     "\\Good_Driver_Program",
-    "\\Good_Driver_Program\\__pycache__",
     "\\portal",
     "\\portal\\templates",
     "\\portal\\templates\\portal",
-    "\\users"
+    "\\users",
+    "\\users\\templates",
+    "\\users\\templates\\users"
   ],
-  "SelectedNode": "\\Good_Driver_Program\\urls.py",
+  "SelectedNode": "\\portal\\views.py",
   "PreviewInSolutionExplorer": false
 }

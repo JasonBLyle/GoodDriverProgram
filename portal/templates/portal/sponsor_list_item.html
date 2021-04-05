@@ -32,6 +32,7 @@
 			{% for item in items reversed %}
 			<tbody>
 				<tr>
+					<td><img class="Product-Image" src="{{item.image}}" width="170" height="135"> </td>
 					<td>{{ item.title }}</td>
 					<td>{{ item.price }}</td>
 					<td>{{ item.currency_code }}</td>
@@ -39,7 +40,7 @@
 					<td>
 						<form action="{% url 'sponsor-list-item' %}" method="post">
 							{% csrf_token %}
-							<button id="product-chosen" type="submit" name="product-chosen" value="{{ item.listing_id }}"  class="btn btn-success">Add to Catalog</button>
+							<button id="product-chosen" type="submit" name="product-chosen" value="{{ item.listing_id }}" class="btn btn-success">Add to Catalog</button>
 						</form>
 					</td>
 				</tr>
