@@ -9,6 +9,7 @@ from django.shortcuts import redirect
 import requests
 from django.contrib.auth.models import User
 from html import unescape
+import time
 
 
 # send user to homepage
@@ -104,14 +105,24 @@ def catalog_sponsor(request):
 				newProduct = Product.objects.filter(sponsor_company=sponsor.sponsor_company, idNum = prodID).delete()
 		listed_products = Product.objects.filter(sponsor_company=sponsor.sponsor_company)
 		parse1 = []
+		tally = 0
 		for item in listed_products:
 			parse1.append(requests.get('https://openapi.etsy.com/v2/listings/'+str(item.idNum)+'?api_key=pmewf48x56vb387qgsprzzry').json()['results'][0])
+			tally+=1
+			if tally>8:
+				time.sleep(1)
+				tally = 0
+		tally = 0
 		parse3 = parse1
 		tags = "tags: "
 		for x in parse3:
 			x['title']=unescape(x['title'])
 			x['description']=unescape(x['description'])
 			x['image']=requests.get('https://openapi.etsy.com/v2/listings/'+str(x['listing_id'])+'/images?api_key=pmewf48x56vb387qgsprzzry').json()['results'][0]['url_170x135']
+			tally+=1
+			if tally>8:
+				time.sleep(1)
+				tally = 0
 			if len(x['title'])>50:
 				x['title']=x['title'][0:49]+'...'
 			if len(x['description'])>250:
