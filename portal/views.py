@@ -161,14 +161,20 @@ def sponsor_list(request):
 			sponsor.save()
 		response = requests.get('https://openapi.etsy.com/v2/listings/active?keywords='+sponsor.list_last_search+'&api_key=pmewf48x56vb387qgsprzzry')
 		parse1 = response.json()['results']
+		tally = 0;
 		for x in parse1:
 			x['title']=unescape(x['title'])
 			x['description']=unescape(x['description'])
 			x['image']=requests.get('https://openapi.etsy.com/v2/listings/'+str(x['listing_id'])+'/images?api_key=pmewf48x56vb387qgsprzzry').json()['results'][0]['url_170x135']
+			tally+=1
+			if tally>8:
+				time.sleep(1)
+				tally = 0
 			if len(x['title'])>50:
 				x['title']=x['title'][0:49]+'...'
 			if len(x['description'])>250:
 				x['description']=x['description'][0:249 ]+'...'
+		tally = 0
 		data = {
 			'items': parse1,
 			'searchVal': sponsor.list_last_search
