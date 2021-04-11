@@ -1,0 +1,17 @@
+<!-- Load styling -->
+{% extends "portal/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+	<div class="content-section">
+		<form enctype="multipart/form-data" method="POST">
+			{% csrf_token %}
+			<fieldset class="form-group">
+				<legend class="border-bottom mb-4">Update Points</legend>
+				{{ driver_points_form|crispy }}
+			</fieldset>
+			<form method="POST">
+				<button class="btn btn-outline-info" name="driver_username" value="{{driver.username}}" type="submit">SUBMIT</button>
+			</div>
+		</form>
+	</div>
+{% endblock content%}
