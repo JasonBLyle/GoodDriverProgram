@@ -8,13 +8,3 @@
 .platform/*
 .vs/*
 
-
-# Colin
-
-.ebextensions/django.config
-.platform/00_myconf.config
-.platform/nginx/conf.d/proxy.conf
-.vs/ProjectSettings.json
-.vs/S21-Team03-Morse.Hayde.Caldwell.Rogers.Lyle/v16/.suo
-.vs/VSWorkspaceState.json
-.vs/slnx.sqlite
